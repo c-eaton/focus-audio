@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Adaptive Audio</title>
+    <link rel="stylesheet" href="styles.css" />
+</head>
+
+<body>
+    <main class="app">
+        <section class="hero">
+            <p class="eyebrow">Adaptive sound environment</p>
+            <h1>Settle in.</h1>
+            <p class="description">
+                Subtle non-repeating audio for focus and calm. Designed to fade into the background.
+            </p>
+        </section>
+
+        <div class="timer" id="timer">00:00</div>
+
+        <section class="mode-picker">
+            <button class="mode-button active" data-mode="focus">Focus</button>
+            <button class="mode-button" data-mode="calm">Calm</button>
+        </section>
+
+        <div class="controls">
+            <button id="startButton" class="primary">Start</button>
+            <button id="stopButton" class="secondary" disabled>Stop</button>
+        </div>
+
+        <label class="volume-control">
+            <span>Volume</span>
+            <input id="volumeSlider" type="range" min="0" max="1" step="0.01" value="0.5" />
+        </label>
+
+        <p class="mode-label" id="modeLabel">Focus mode</p>
+    </main>
+
+    <script src="app.js"></script>
+</body>
+
+</html>

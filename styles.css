@@ -1,0 +1,141 @@
+* {
+    box-sizing: border-box;
+}
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: grid;
+    place-items: center;
+    font-family: Inter, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+    background:
+        radial-gradient(circle at top, #252525 0%, #121212 42%, #080808 100%);
+    color: #f5f2ec;
+}
+
+.app {
+    width: min(440px, 92vw);
+    padding: 32px;
+    border-radius: 28px;
+    background: rgba(24, 24, 24, 0.92);
+    border: 1px solid rgba(255, 255, 255, 0.08);
+    box-shadow: 0 30px 90px rgba(0, 0, 0, 0.45);
+}
+
+.hero {
+    text-align: center;
+}
+
+.eyebrow {
+    margin: 0 0 10px;
+    font-size: 0.75rem;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: #a8a29a;
+}
+
+h1 {
+    margin: 0;
+    font-size: 2.4rem;
+    letter-spacing: -0.04em;
+}
+
+.description {
+    margin: 14px auto 0;
+    max-width: 340px;
+    color: #b9b3aa;
+    line-height: 1.5;
+}
+
+.timer {
+    margin: 34px 0 28px;
+    text-align: center;
+    font-size: 3.2rem;
+    font-variant-numeric: tabular-nums;
+    letter-spacing: -0.05em;
+}
+
+.mode-picker {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    padding: 6px;
+    margin-bottom: 18px;
+    border-radius: 999px;
+    background: #101010;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.mode-button {
+    padding: 12px 16px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: #aaa39a;
+    cursor: pointer;
+    font-size: 0.95rem;
+}
+
+.mode-button.active {
+    background: #f5f2ec;
+    color: #111;
+}
+
+.mode-button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.controls {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+button {
+    font: inherit;
+}
+
+.primary,
+.secondary {
+    padding: 14px 18px;
+    border: 0;
+    border-radius: 16px;
+    cursor: pointer;
+}
+
+.primary {
+    background: #d8d0c4;
+    color: #111;
+}
+
+.secondary {
+    background: #292929;
+    color: #f5f2ec;
+}
+
+.primary:disabled,
+.secondary:disabled {
+    opacity: 0.45;
+    cursor: not-allowed;
+}
+
+.volume-control {
+    display: grid;
+    gap: 10px;
+    color: #c9c2b8;
+    font-size: 0.95rem;
+}
+
+input[type="range"] {
+    width: 100%;
+    accent-color: #d8d0c4;
+}
+
+.mode-label {
+    margin: 22px 0 0;
+    text-align: center;
+    color: #8f877c;
+    font-size: 0.9rem;
+}
