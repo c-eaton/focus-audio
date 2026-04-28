@@ -6,15 +6,28 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Adaptive Audio</title>
     <link rel="stylesheet" href="styles.css" />
+    <meta name="description" content="Adaptive, non-repeating background audio for focus and calm." />
+    <meta name="theme-color" content="#080808" />
+    <link rel="icon" href="favicon.ico" />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
 </head>
 
 <body>
     <main class="app">
+        <header class="brand">
+            <svg class="logo-mark" viewBox="0 0 32 32" fill="none">
+                <rect x="2" y="2" width="28" height="28" rx="10" fill="#d8d0c4"></rect>
+                <path d="M8 16c3-6 13-6 16 0" stroke="#111" stroke-width="2.5" stroke-linecap="round"></path>
+            </svg>
+
+            <span class="brand-name">Drift</span>
+        </header>
+
         <section class="hero">
-            <p class="eyebrow">Adaptive sound environment</p>
-            <h1>Settle in.</h1>
+            <p class="eyebrow">Non-repeating focus audio</p>
+            <h1>Background sound for deep work.</h1>
             <p class="description">
-                Subtle non-repeating audio for focus and calm. Designed to fade into the background.
+                Adaptive audio that changes subtly over time, so it feels steady without becoming obvious.
             </p>
         </section>
 
@@ -35,10 +48,23 @@
             <input id="volumeSlider" type="range" min="0" max="1" step="0.01" value="0.5" />
         </label>
 
+        <section class="trust">
+            <p><strong>No loops.</strong> Procedural sound changes subtly over time.</p>
+            <p><strong>No claims.</strong> Built for comfort, focus, and long listening tolerance.</p>
+            <p><strong>Private by default.</strong> Audio runs in your browser.</p>
+        </section>
+
         <p class="mode-label" id="modeLabel">Focus mode</p>
+
     </main>
 
     <script src="app.js"></script>
 </body>
+
+
+<footer class="footer">
+    <span>Drift v0.1 </span>
+    <a href="mailto:your@email.com">Feedback</a>
+</footer>
 
 </html>

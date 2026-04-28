@@ -4,6 +4,7 @@ const volumeSlider = document.getElementById("volumeSlider");
 const timerDisplay = document.getElementById("timer");
 const modeButtons = document.querySelectorAll(".mode-button");
 const modeLabel = document.getElementById("modeLabel");
+const logo = document.querySelector('.logo-mark');
 
 const presets = {
     focus: {
@@ -484,6 +485,8 @@ async function startEngine() {
 
     isRunning = true;
 
+    logo?.classList.add('active');
+
     startNoiseBed(audioContext);
 
     addTimer(
@@ -531,6 +534,9 @@ function stopEngine() {
 
     isRunning = false;
     isStopping = true;
+
+    logo?.classList.remove('active');
+
     clearAllTimers();
 
     if (!audioContext || !masterGain) {
