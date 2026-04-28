@@ -21,29 +21,29 @@ const presets = {
         },
         noiseBed: {
             gain: [0.035, 0.075],
-            lowpass: [750, 1250],
-            highpass: [80, 160],
+            lowpass: [500, 900],
+            highpass: [120, 220],
             pan: [-0.05, 0.05],
-            modulationInterval: [45, 120],
+            modulationInterval: [90, 240],
         },
         tonalBody: {
             startDelaySeconds: 30,
             fadeInSeconds: 60,
-            rootFrequency: [220, 320],
-            intervals: [1, 1.37],
+            rootFrequency: [120, 220],
+            intervals: [1, 1.2],
             waveform: "sine",
             detuneCents: [-2, 2],
             lowpass: [500, 900],
-            modulationInterval: [120, 240],
-            firstGain: [0.00006, 0.00018],
-            secondGain: [0.00002, 0.00007],
+            modulationInterval: [90, 240],
+            firstGain: [0.00003, 0.0001],
+            secondGain: [0.00001, 0.00004],
         },
         microMovement: {
             eventGap: [15, 35],
-            eventProbability: 0.5,
+            // eventProbability: 0.5,
             duration: [5, 12],
-            gain: [0.002, 0.008],
-            bandpassFrequency: [350, 1400],
+            //  gain: [0.002, 0.008],
+            // bandpassFrequency: [350, 1400],
             q: [0.4, 1.0],
             pan: [-0.18, 0.18],
             attack: [2.5, 5],
@@ -194,6 +194,64 @@ function getTargetMasterGain() {
     return Number(volumeSlider.value) * currentPreset.master.gain;
 }
 
+function createImpulseResponse(context, duration = 3, decay = 2) {
+    const sampleRate = context.sampleRate;
+    const length = sampleRate * duration;
+    const impulse = context.createBuffer(2, length, sampleRate);
+
+    for (let channel = 0; channel < 2; channel++) {
+        const data = impulse.getChannelData(channel);
+        for (let i = 0; i < length; i++) {
+            data[i] =
+                (Math.random() * 2 - 1) *
+                Math.pow(1 - i / length, decay);
+        }
+    }
+
+    return impulse;
+}
+
+function chooseNewEnvironmentPhase() {
+    if (!isRunning || !audioContext) return;
+
+    // Slightly shift noise bed
+    if (noiseGain && noiseLowpass && noiseHighpass && noisePan) {
+        const duration = secondsRange([180, 360]); // 3–6 minute transition
+
+        setSmooth(noiseGain.gain, secondsRange(currentPreset.noiseBed.gain), duration);
+        setSmooth(noiseLowpass.frequency, secondsRange(currentPreset.noiseBed.lowpass), duration);
+        setSmooth(noiseHighpass.frequency, secondsRange(currentPreset.noiseBed.highpass), duration);
+        setSmooth(noisePan.pan, secondsRange([-0.025, 0.025]), duration);
+    }
+
+    // Slightly shift tonal layer
+    tonalGains.forEach((gain, index) => {
+        const duration = secondsRange([180, 420]);
+
+        const targetGain =
+            index === 0
+                ? secondsRange(currentPreset.tonalBody.firstGain)
+                : secondsRange(currentPreset.tonalBody.secondGain);
+
+        setSmooth(gain.gain, targetGain, duration);
+    });
+
+    tonalFilters.forEach((filter) => {
+        const duration = secondsRange([180, 420]);
+        setSmooth(filter.frequency, secondsRange(currentPreset.tonalBody.lowpass), duration);
+    });
+
+    tonalOscillators.forEach((oscillator) => {
+        const duration = secondsRange([180, 420]);
+        setSmooth(oscillator.detune, secondsRange(currentPreset.tonalBody.detuneCents), duration);
+    });
+
+    // Schedule next phase shift: every 5–10 minutes
+    const nextDelay = secondsRange([300, 600]) * 1000;
+
+    addTimer(setTimeout(chooseNewEnvironmentPhase, nextDelay));
+}
+
 function createMasterChain(context) {
     masterGain = context.createGain();
     masterGain.gain.value = 0;
@@ -205,6 +263,19 @@ function createMasterChain(context) {
     compressor.attack.value = currentPreset.master.compressor.attack;
     compressor.release.value = currentPreset.master.compressor.release;
 
+    const reverb = context.createConvolver();
+    const reverbGain = context.createGain();
+
+    // subtle mix
+    reverbGain.gain.value = 0.08; // 5–10% is ideal
+
+    // routing
+    masterGain.connect(reverb);
+    reverb.connect(reverbGain);
+    reverbGain.connect(compressor);
+    reverb.buffer = createImpulseResponse(context, 3, 2);
+
+    // dry signal still goes through
     masterGain.connect(compressor);
     compressor.connect(context.destination);
 }
@@ -258,12 +329,15 @@ function startNoiseBed(context) {
 function modulateNoiseBed() {
     if (!isRunning || !audioContext || !noiseGain) return;
 
-    const duration = secondsRange([30, 80]);
+    const duration = secondsRange([60, 140]);
 
-    setSmooth(noiseGain.gain, secondsRange(currentPreset.noiseBed.gain), duration);
+    setSmooth(noiseGain.gain,
+        secondsRange(currentPreset.noiseBed.gain) * randomBetween(0.9, 1.1),
+        duration
+    );
     setSmooth(noiseLowpass.frequency, secondsRange(currentPreset.noiseBed.lowpass), duration);
     setSmooth(noiseHighpass.frequency, secondsRange(currentPreset.noiseBed.highpass), duration);
-    setSmooth(noisePan.pan, secondsRange(currentPreset.noiseBed.pan), duration);
+    setSmooth(noisePan.pan, randomBetween(-0.03, 0.03), duration);
 
     const nextDelay = secondsRange(currentPreset.noiseBed.modulationInterval) * 1000;
     addTimer(setTimeout(modulateNoiseBed, nextDelay));
@@ -438,6 +512,7 @@ async function startEngine() {
 
     modulateNoiseBed();
     scheduleMicroMovement();
+    chooseNewEnvironmentPhase();
 
     sessionStartTime = Date.now();
     timerDisplay.textContent = "00:00";
